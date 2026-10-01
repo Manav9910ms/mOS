@@ -64,3 +64,13 @@ button{border:0}
   .mos-window{left:8px!important;top:8px!important;width:calc(100% - 16px)!important;height:calc(100% - 16px)!important;min-width:0}.files-layout,.settings-layout{grid-template-columns:1fr}.files-sidebar,.settings-nav{display:none}.start-app-grid{grid-template-columns:repeat(3,1fr)}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition:none!important}}
+
+.files-grid.list-view{display:block}.files-grid.list-view .file-card{display:flex;align-items:center;text-align:left;gap:12px;padding:9px 12px}.files-grid.list-view .file-card-icon{font-size:20px;margin:0}.files-grid.list-view .file-card-name{flex:1}
+.desktop[data-wallpaper="midnight"]{background:radial-gradient(circle at 70% 20%,rgba(59,130,246,.16),transparent 35%),linear-gradient(135deg,#020617,#111827 60%,#0f172a)}
+.desktop[data-wallpaper="sunset"]{background:radial-gradient(circle at 20% 25%,rgba(251,146,60,.28),transparent 35%),radial-gradient(circle at 80% 70%,rgba(244,114,182,.18),transparent 35%),linear-gradient(135deg,#431407,#4c1d95 65%,#111827)}
+html[data-theme="light"] .mos-window{background:rgba(255,255,255,.98)}
+html[data-theme="light"] .desktop{color:#0f172a}
+html[data-theme="light"] .start-menu,html[data-theme="light"] .search-panel,html[data-theme="light"] .notification-panel,html[data-theme="light"] .context-menu{background:rgba(248,250,252,.96);color:#0f172a;border-color:rgba(15,23,42,.12)}
+html[data-theme="light"] .start-search,html[data-theme="light"] .search-panel input{background:#fff;color:#0f172a;border-color:#cbd5e1}
+html[data-theme="light"] .start-app,html[data-theme="light"] .start-footer-btn,html[data-theme="light"] .context-item{color:#334155}
+html[data-theme="light"] .start-app:hover,html[data-theme="light"] .context-item:hover{background:#e2e8f0}
