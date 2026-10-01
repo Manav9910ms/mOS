@@ -1,4 +1,6 @@
 (() => {
+  const API_BASE = "http://127.0.0.1:3000";
+
   const menu = document.createElement("div");
   menu.className = "context-menu";
   menu.innerHTML = `
@@ -39,12 +41,35 @@
     workspace.innerHTML = "";
   }
 
+  async function api(endpoint, options = {}) {
+    const response = await fetch(`${API_BASE}${endpoint}`, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...(options.headers || {})
+      }
+    });
+
+    let data = {};
+    try {
+      data = await response.json();
+    } catch {
+      // Keep the HTTP status as the useful error when the response is not JSON.
+    }
+
+    if (!response.ok) {
+      throw new Error(data.error || `Backend request failed (${response.status}).`);
+    }
+
+    return data;
+  }
+
   async function loadStorage() {
     try {
-      const items = await window.mosStorage.list();
+      const data = await api("/api/storage");
       clearItems();
 
-      for (const item of items) {
+      for (const item of data.items) {
         addItem(item.name, item.type);
       }
     } catch (error) {
@@ -53,7 +78,8 @@
 
       const message = document.createElement("div");
       message.className = "backend-warning";
-      message.textContent = "Unable to read mOS storage.";
+      message.textContent =
+        "mOS backend is not running. Run: npm run server";
       workspace.appendChild(message);
     }
   }
@@ -67,8 +93,15 @@
     }
 
     try {
-      const item = await window.mosStorage.create(type, name.trim());
-      addItem(item.name, item.type);
+      const data = await api("/api/storage/create", {
+        method: "POST",
+        body: JSON.stringify({
+          type,
+          name: name.trim()
+        })
+      });
+
+      addItem(data.item.name, data.item.type);
     } catch (error) {
       window.alert(error.message || "Could not create item.");
     }
