@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111827">
+  <meta name="description" content="mOS — Your desktop, anywhere. A portable browser-based pseudo-desktop.">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./assets/mos.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./css/mos.css">
+  <title>mOS — Your desktop, anywhere.</title>
+</head>
+<body>
+  <div id="boot-screen" class="boot-screen">
+    <div class="boot-logo">m<span>OS</span></div>
+    <div class="boot-tagline">Your desktop, anywhere.</div>
+    <div class="boot-progress"><span></span></div>
+  </div>
+
+  <main id="desktop" class="desktop" aria-label="mOS desktop">
+    <div id="desktop-icons" class="desktop-icons"></div>
+
+    <div id="start-menu" class="start-menu hidden" role="menu" aria-label="mOS Start">
+      <div class="start-header">
+        <div class="brand-mark">mOS</div>
+        <div class="start-user">Portable Desktop</div>
+      </div>
+      <div class="start-search-wrap">
+        <input id="start-search" class="start-search" type="search" placeholder="Search apps and files..." autocomplete="off">
+      </div>
+      <div id="start-results" class="start-results"></div>
+      <div id="start-apps" class="start-app-grid"></div>
+      <div class="start-footer">
+        <button class="start-footer-btn" data-action="open-settings">⚙ Settings</button>
+        <button class="start-footer-btn danger" data-action="exit-mos">⏻ Exit mOS</button>
+      </div>
+    </div>
+
+    <div id="search-panel" class="search-panel hidden" aria-label="Search">
+      <input id="global-search" type="search" placeholder="Search apps and files..." autocomplete="off">
+      <div id="global-results"></div>
+    </div>
+
+    <div id="context-menu" class="context-menu hidden" role="menu"></div>
+
+    <div id="window-layer" class="window-layer"></div>
+
+    <div id="notification-panel" class="notification-panel hidden">
+      <div class="notification-head"><strong>Notifications</strong><button id="clear-notifications" class="icon-btn" aria-label="Clear notifications">×</button></div>
+      <div id="notification-list" class="notification-list"></div>
+    </div>
+
+    <div id="taskbar" class="taskbar">
+      <div class="taskbar-left">
+        <button id="start-button" class="taskbar-button start-button" aria-label="Open Start menu">mOS</button>
+        <button id="search-button" class="taskbar-button" aria-label="Search">⌕</button>
+      </div>
+      <div id="taskbar-apps" class="taskbar-apps" aria-label="Running applications"></div>
+      <div class="taskbar-right">
+        <button id="network-indicator" class="tray-btn" aria-label="Network status">◉</button>
+        <button id="sound-indicator" class="tray-btn" aria-label="Audio status">◌</button>
+        <button id="battery-indicator" class="tray-btn" aria-label="Battery status">▰</button>
+        <button id="notification-button" class="tray-btn" aria-label="Notifications">♢</button>
+        <button id="clock-button" class="clock-btn" aria-label="Time"></button>
+      </div>
+    </div>
+
+    <div id="toast-stack" class="toast-stack" aria-live="polite"></div>
+  </main>
+
+  <script type="module" src="./js/mos.js"></script>
+</body>
+</html>
