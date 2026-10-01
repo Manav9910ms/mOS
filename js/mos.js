@@ -11,7 +11,7 @@ const Settings={
   },
   save(){localStorage.setItem('mos-settings',JSON.stringify(state.settings));this.apply()},
   apply(){
-    document.documentElement.style.setProperty('--mos-accent',state.settings.accent);
+    document.documentElement.style.setProperty('--mos-accent',state.settings.accent);\n    document.documentElement.dataset.theme=state.settings.theme;
     $('#desktop').dataset.wallpaper=state.settings.wallpaper;
     $('#desktop-icons').style.display=state.settings.showIcons?'grid':'none';
     const dark=state.settings.theme==='dark';
@@ -146,4 +146,4 @@ $('#start-menu').addEventListener('click',e=>{const a=e.target.closest('[data-ac
 function clock(){const d=new Date();$('#clock-button').textContent=d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});$('#network-indicator').title=navigator.onLine?'Online':'Offline';$('#network-indicator').textContent=navigator.onLine?'◉':'○';const b=navigator.getBattery?.();if(b)b.then(x=>{$('#battery-indicator').textContent=x.charging?'⚡':'▰'}).catch(()=>{})}
 setInterval(clock,1000);clock();window.addEventListener('online',clock);window.addEventListener('offline',clock);
 
-(async function boot(){await Settings.load();await FileSystem.init();await import('./apps.js');AppRegistry.renderStart();await renderDesktopIcons();renderNotifications();setTimeout(()=>$('#boot-screen').remove(),900)})();
+(async function boot(){await Settings.load();await FileSystem.init();await import('./apps.js');\n  if('serviceWorker' in navigator && location.protocol!=='file:'){navigator.serviceWorker.register('./service-worker.js').catch(err=>console.warn('mOS service worker unavailable',err))}AppRegistry.renderStart();await renderDesktopIcons();renderNotifications();setTimeout(()=>$('#boot-screen').remove(),900)})();
