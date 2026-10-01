@@ -13,7 +13,8 @@ AppRegistry.register({
         <section class="files-main"><div class="app-toolbar"><button class="app-btn" data-act="up">↑ Up</button><button class="app-btn" data-act="folder">＋ Folder</button><button class="app-btn" data-act="file">＋ File</button><button class="app-btn" data-act="import">⇧ Import</button><button class="app-btn" data-act="paste">Paste</button><button class="app-btn" data-act="download">⇩ Download</button><span class="app-spacer"></span><button class="app-btn" data-act="view">${view==='grid'?'☷ Grid':'☰ List'}</button></div>
         <div class="files-path">/ ${escapeHTML(node?.name||'Home')}</div><div class="files-grid ${view==='list'?'list-view':''}" id="files-grid">${kids.map(fileCard).join('')||'<div class="empty-state">This folder is empty</div>'}</div></section>
       </div>`;
-      $$('.files-side-btn',app).forEach(b=>b.onclick=()=>{current=b.dataset.dir;draw()});
+      $('.files-side-btn',app).forEach(b=>b.onclick=()=>{current=b.dataset.dir;draw()});
+      window.addEventListener('mos:open-path',e=>{if(e.detail?.id){current=e.detail.id;draw()}});
       $$('[data-act]',app).forEach(b=>b.onclick=()=>action(b.dataset.act));
       $$('.file-card',app).forEach(c=>{c.addEventListener('dblclick',()=>openNode(c.dataset.id));c.addEventListener('click',()=>{ $$('.file-card',app).forEach(x=>x.classList.remove('selected'));c.classList.add('selected');clipboard=c.dataset.id;window.mOS.clipboard=clipboard})});
     }
@@ -41,6 +42,7 @@ AppRegistry.register({
     root.innerHTML=`<div class="notes-app"><div class="app-toolbar"><button class="app-btn" id="new-note">New</button><button class="app-btn" id="open-note">Open</button><button class="app-btn primary" id="save-note">Save</button><button class="app-btn" id="save-as">Save As</button><span class="app-spacer"></span><span id="note-name" style="font-size:11px;color:#64748b">Untitled</span></div><textarea class="notes-area" id="notes-area" spellcheck="true" placeholder="Start writing..."></textarea><div class="notes-status"><span id="notes-count">0 words · 0 characters</span></div></div>`;
     const area=$('#notes-area',root),count=$('#notes-count',root),nameEl=$('#note-name',root);
     const update=()=>{const t=area.value;count.textContent=(t.trim()?t.trim().split(/\s+/).length:0)+' words · '+t.length+' characters'};area.oninput=update;
+    window.addEventListener('mos:edit-file',e=>{if(e.detail?.file){currentId=e.detail.file.id;area.value=e.detail.file.content||'';nameEl.textContent=e.detail.file.name;update()}});
     $('#new-note',root).onclick=()=>{currentId=null;area.value='';nameEl.textContent='Untitled';update()};
     $('#open-note',root).onclick=async()=>{const files=(await FileSystem.children('documents')).filter(n=>n.type==='file');if(!files.length)return notify('No notes found');const list=files.map((f,i)=>`${i+1}. ${f.name}`).join('\n');const answer=prompt('Enter note number:\n'+list);const f=files[Number(answer)-1];if(f){currentId=f.id;area.value=f.content||'';nameEl.textContent=f.name;update()}};
     $('#save-note',root).onclick=async()=>{try{if(currentId){await FileSystem.write(currentId,area.value)}else{const n=await FileSystem.createFile('Untitled.txt',area.value,'documents');currentId=n.id;nameEl.textContent=n.name}notify('Note saved',nameEl.textContent)}catch(e){notify('Save failed',e.message)}};
@@ -112,8 +114,14 @@ AppRegistry.register({
 });
 
 AppRegistry.register({id:'trash',name:'Trash',icon:'🗑️',mount(root){
-  root.innerHTML=`<div class="app"><div class="app-toolbar"><button class="app-btn" id="empty-trash">Empty Trash</button><span class="app-spacer"></span><span style="font-size:11px;color:#64748b">Deleted items are stored locally.</span></div><div class="files-grid" id="trash-grid"></div></div>`;
-  const grid=$('#trash-grid',root);const draw=async()=>{const items=await FileSystem.children('trash');grid.innerHTML=items.map(n=>`<div class="file-card" data-id="${n.id}"><div class="file-card-icon">${n.type==='dir'?'📁':'📄'}</div><div class="file-card-name">${escapeHTML(n.name)}</div><div style="font-size:10px;color:#94a3b8;margin-top:4px">Right click for actions</div></div>`).join('')||'<div class="empty-state">Trash is empty</div>'};draw();$('#empty-trash',root).onclick=async()=>{await FileSystem.emptyTrash();notify('Trash emptied');draw()}
+  root.innerHTML=\`<div class="app"><div class="app-toolbar"><button class="app-btn" id="empty-trash">Empty Trash</button><span class="app-spacer"></span><span style="font-size:11px;color:#64748b">Deleted items are stored locally.</span></div><div class="files-grid" id="trash-grid"></div></div>\`;
+  const grid=$('#trash-grid',root);
+  const draw=async()=>{const items=await FileSystem.children('trash');grid.innerHTML=items.map(n=>\`<div class="file-card" data-id="${n.id}"><div class="file-card-icon">${n.type==='dir'?'📁':'📄'}</div><div class="file-card-name">${escapeHTML(n.name)}</div><div style="font-size:10px;color:#94a3b8;margin-top:4px">Click to select</div></div>\`).join('')||'<div class="empty-state">Trash is empty</div>';
+    $$('.file-card',root).forEach(c=>c.onclick=()=>{ $$('.file-card',root).forEach(x=>x.classList.remove('selected')); c.classList.add('selected')});
+  };
+  draw();
+  $('#empty-trash',root).onclick=async()=>{await FileSystem.emptyTrash();notify('Trash emptied');draw()};
+  root.addEventListener('contextmenu',e=>{const card=e.target.closest('.file-card');if(!card)return;e.preventDefault();const action=prompt('Trash item action: restore / delete','restore');if(action==='restore'){FileSystem.restore(card.dataset.id).then(()=>{notify('Item restored');draw()})}else if(action==='delete'){FileSystem.remove(card.dataset.id).then(()=>{notify('Item permanently deleted');draw()})}});
 }});
 
 AppRegistry.register({id:'computer',name:'Computer',icon:'🖥️',mount(root){
