@@ -1,8 +1,13 @@
 {
   "name": "mos",
   "version": "1.0.0",
+  "description": "mOS - local desktop environment",
+  "main": "main.js",
   "private": true,
   "scripts": {
-    "start": "node server.js"
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^38.2.0"
   }
 }
