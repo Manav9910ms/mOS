@@ -11,7 +11,8 @@ const Settings={
   },
   save(){localStorage.setItem('mos-settings',JSON.stringify(state.settings));this.apply()},
   apply(){
-    document.documentElement.style.setProperty('--mos-accent',state.settings.accent);\n    document.documentElement.dataset.theme=state.settings.theme;
+    document.documentElement.style.setProperty('--mos-accent',state.settings.accent);
+    document.documentElement.dataset.theme=state.settings.theme;
     $('#desktop').dataset.wallpaper=state.settings.wallpaper;
     $('#desktop-icons').style.display=state.settings.showIcons?'grid':'none';
     const dark=state.settings.theme==='dark';
