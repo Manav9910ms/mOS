@@ -6,7 +6,7 @@ const url = require("url");
 const HOST = "127.0.0.1";
 const PORT = 3000;
 const ROOT = path.resolve(__dirname);
-const STORAGE = path.join(ROOT, "storage");
+const STORAGE = path.resolve(ROOT, "..", "storage");
 
 fs.mkdirSync(STORAGE, { recursive: true });
 
